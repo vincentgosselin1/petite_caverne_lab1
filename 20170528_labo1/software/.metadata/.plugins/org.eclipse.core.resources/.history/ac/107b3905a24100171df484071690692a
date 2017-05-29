@@ -1,0 +1,17 @@
+/*
+ * button_reader.h
+ *
+ *  Created on: 2017-05-25
+ *      Author: ak82770
+ */
+
+#ifndef BUTTON_READER_H_
+#define BUTTON_READER_H_
+
+#define buttons_register IORD(BUTTONS_BASE,0) //sur 4 bits.
+#define key0 0xe;
+#define key1 0xd;
+
+
+
+#endif /* BUTTON_READER_H_ */

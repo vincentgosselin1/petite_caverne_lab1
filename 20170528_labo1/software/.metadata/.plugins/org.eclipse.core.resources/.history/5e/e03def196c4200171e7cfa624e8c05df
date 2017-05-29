@@ -1,0 +1,81 @@
+/*
+ * main.c
+ *
+ *
+ */
+ /****** labo1 *****************************************************
+* Description
+* Allume et eteint 2 DEL selon un intervalle determine par les switches
+******************************************************************************
+* Author : Vincent Gosselin, Carl Trudeau
+* Creation date : 2014-05-01
+ * Last Modified : 2014-05-01
+******************************************************************************/
+#include "io.h"
+#include "alt_types.h"
+#include "system.h"
+
+//Custom .h files
+#include "sseg_driver.h"
+#include "led_driver.h"
+#include "button_reader.h"
+#include "jtag_driver.h"
+
+
+int main(void)
+{
+
+	// Necessaire puisque au depart tout les edges sont active pour une raison...
+	//RISING Edge est selectionne dans Qsys.
+	clear_all_edge_capture;
+
+	//led flashing, default 500ms.
+	int period = 500;
+
+	//Systeme mode, 0 pour Pause, 1 pour Running. Default, Running.
+	int system_running = 1;
+
+	while(1)
+	{
+		//RUN
+		while(system_running)
+		{
+			led_flash(LEDS_BASE, period);
+			display_int_to_sseg(period);
+
+			//Nouvelle position
+			if(edge_capture & key1_pressed)
+			{
+				get_switches(SWITCHES_BASE, &period);
+				clear_key1;
+
+				//Sending new Period on JTAG.
+				char * string_to_send = (char)period;
+				juart_write_string(JTAG_UART_0_BASE, )
+
+			}
+			//Exiting RUN mode.
+			if(edge_capture & key0_pressed)
+			{
+				system_running = 0;
+				clear_key0;
+			}
+		}
+		//PAUSE
+		while(!system_running)
+		{
+			display_pause();
+			all_leds_off();
+			//Re-entering RUN mode.
+			if(edge_capture & key0_pressed)
+			{
+				system_running = 1;
+				clear_key0;
+			}
+		}
+
+
+	}
+	return 0;
+}
+

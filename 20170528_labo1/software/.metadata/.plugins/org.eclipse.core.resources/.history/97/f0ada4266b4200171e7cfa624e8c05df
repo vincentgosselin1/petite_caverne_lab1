@@ -1,0 +1,24 @@
+/*
+ * jtag_driver.h
+ *
+ *  Created on: 2017-05-26
+ *      Author: ak82770
+ */
+
+#ifndef JTAG_DRIVER_H_
+#define JTAG_DRIVER_H_
+
+
+/* Exemple d'envoi de chaine de characteres a travers le JTAG UART */
+#define JUART_DATA_REG_OFT   0			//offset du data register
+#define JUART_CTRL_REG_OFT   1			//offset du control register
+#define JUART_WSPACE_MASK    0xffff0000
+#define JUART_WSPACE_BIT_OFT 16			//bit offset du champ wspace
+#define JUART_CHAR_MASK		 0x000000ff
+
+/*verifier l'espace disponible dans le tampon FIFO ecriture */
+#define juart_read_wspace(base) ((IORD(base, JUART_CTRL_REG_OFT) & JUART_WSPACE_MASK) >> JUART_WSPACE_BIT_OFT)
+
+
+
+#endif /* JTAG_DRIVER_H_ */

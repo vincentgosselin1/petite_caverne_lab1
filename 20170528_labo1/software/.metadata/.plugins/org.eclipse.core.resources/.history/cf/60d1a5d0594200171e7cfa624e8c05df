@@ -1,0 +1,50 @@
+/*
+ * main.c
+ *
+ *
+ */
+ /****** labo1 *****************************************************
+* Description
+* Allume et eteint 2 DEL selon un intervalle determine par les switches
+******************************************************************************
+* Author : Vincent Gosselin, Carl Trudeau
+* Creation date : 2014-05-01
+ * Last Modified : 2014-05-01
+******************************************************************************/
+#include "io.h"
+#include "alt_types.h"
+#include "system.h"
+
+//Custom .h files
+#include "sseg_driver.h"
+#include "led_driver.h"
+#include "button_reader.h"
+
+
+int main(void)
+{
+
+
+	//display pause
+	display_pause();
+	int system_in_pause = 1;
+
+	//led flashing, default 500ms.
+	int period;
+
+	while(1)
+	{
+
+		if(buttons_edge_capture == key0_pressed){
+
+		}
+		/*//System en pause
+		while(system_in_pause){
+			//Wait until Key0 is pressed.
+
+		}*/
+
+	}
+	return 0;
+}
+

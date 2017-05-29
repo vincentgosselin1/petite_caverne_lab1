@@ -1,0 +1,14 @@
+/*
+ * 7seg_driver.c
+ *
+ *  Created on: 2017-05-25
+ *      Author: ak82770
+ */
+
+//pilote pour 4 afficheurs 7 segments controle par un PIO 32bit sortie seulement.
+
+#define PIO_DATA_REG_OFT 0	//offset du registre Data
+
+
+
+

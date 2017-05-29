@@ -1,0 +1,18 @@
+/*
+ * jtag_driver.h
+ *
+ *  Created on: 2017-05-26
+ *      Author: ak82770
+ */
+
+#ifndef JTAG_DRIVER_H_
+#define JTAG_DRIVER_H_
+
+
+/* Exemple d'envoi de chaine de characteres a travers le JTAG UART */
+#define JUART_DATA_REGT_OFT 0
+#define JUART_CTRL_REG_OFT  1
+
+
+
+#endif /* JTAG_DRIVER_H_ */

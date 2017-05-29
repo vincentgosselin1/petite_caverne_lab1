@@ -1,0 +1,161 @@
+/*
+ * main.c
+ *
+ *
+ */
+ /****** labo1 *****************************************************
+* Description
+* Allume et eteint 2 DEL selon un intervalle determine par les switches
+******************************************************************************
+* Author : Vincent Gosselin, Carl Trudeau
+* Creation date : 2014-05-01
+ * Last Modified : 2014-05-01
+******************************************************************************/
+#include "io.h"
+#include "alt_types.h"
+#include "system.h"
+
+//Custom .h files
+#include "sseg_driver.h"
+#include "led_driver.h"
+#include "button_reader.h"
+#include "jtag_driver.h"
+#include "interval_timer_driver.h"
+
+int main(void)
+{
+
+	// Necessaire puisque au depart tout les edges sont active pour une raison...
+	//RISING Edge est selectionne dans Qsys.
+	clear_all_edge_capture;
+
+	//led flashing, default 500ms.
+	int period = 500;
+
+	//test pour high and lows values in interval_timer.h
+	//alt_u32 nb_of_steps = ms_to_nb_of_steps(500);
+	//alt_u32 new_period = 0x2FAF080;//correspond a X dans : 1 sec = X *20ns. Equivaut auX nombre de step.
+	//alt_u32 timer_done;
+
+
+	//Configuration du interval timer
+	timer_write_period(TIMER_0_BASE,ms_to_nb_of_steps(period));
+	display_all_off();
+
+
+	//Systeme mode, 0 pour Pause, 1 pour Running. Default, Running.
+	int system_running = 1;
+
+	while(1)
+	{
+		//testing interval_timer
+		//temp = timer_read_tick(TIMER_0_BASE);
+		//Check to see if timer is done.
+		if(read_timer(TIMER_0_BASE))
+		{
+			//reset timer new fct
+			restart_timer(TIMER_0_BASE);
+			//inverting LEDs
+			inverting_leds(LEDS_BASE);
+			//reset 1sec timer
+			//IOWR(TIMER_0_BASE, TIMER_STAT_REG_OFT, 0);
+			//start timer again
+			//IOWR(TIMER_0_BASE, TIMER_CTRL_REG_OFT, 4);
+		}
+
+		//RUN
+		while(system_running)
+		{
+
+			//Avec interval timer
+			if(read_timer(TIMER_0_BASE))
+			{
+				//inverting LEDs
+				inverting_leds(LEDS_BASE);
+				//reset timer new fct
+				restart_timer(TIMER_0_BASE);
+			}
+
+
+			//Display de la periode sur 7-seg.
+			display_int_to_sseg(period);
+
+			//Nouvelle position
+			if(edge_capture & key1_pressed)
+			{
+				get_switches(SWITCHES_BASE, &period);
+
+				//Display de la periode sur 7-seg.
+				display_int_to_sseg(period);
+
+				clear_key1;
+
+				//Sending new Period on JTAG.
+				//building string_to_send1
+				char string_to_send1[5];
+
+//Need mallocs to wrap in nice function... I think //////////////////////////////////////////////////////////////////////////////
+				//converting period from int to char*.
+				int temp = period; //pour ne pas affecter la periode.
+
+				int thousands=0; //indique le nombre de milliers dans period
+				while(temp >= 1000){
+					thousands++;
+					temp -= 1000;
+				}
+				string_to_send1[0] = (char)thousands +'0'; //conversion d'un int en char.
+
+				int hundreds=0; //indique le nombre de centiers dans period
+				while(temp >= 100){
+					hundreds++;
+					temp -= 100;
+				}
+				string_to_send1[1] = (char)hundreds +'0'; //conversion d'un int en char.
+
+				int tens=0; //indique le nombre de dizaines dans period
+				while(temp >= 10){
+					tens++;
+					temp -= 10;
+				}
+				string_to_send1[2] = (char)tens +'0'; //conversion d'un int en char.
+
+				int units=0; //indique le nombre d'unite dans period
+				while(temp >= 1){
+					units++;
+					temp -= 1;
+				}
+				string_to_send1[3] = (char)units +'0'; //conversion d'un int en char.
+
+				string_to_send1[4] = '\0'; //to terminate string. Takes care of weird characters.
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+				  // Now str contains the integer as characters
+				char * string_to_send2 =  " ms \n\r\0";
+				juart_write_string(JTAG_UART_0_BASE, string_to_send1);
+				juart_write_string(JTAG_UART_0_BASE, string_to_send2);
+
+			}
+			//Exiting RUN mode.
+			if(edge_capture & key0_pressed)
+			{
+				system_running = 0;
+				clear_key0;
+			}
+		}
+		//PAUSE
+		while(!system_running)
+		{
+			display_pause();
+			all_leds_off();
+			//Re-entering RUN mode.
+			if(edge_capture & key0_pressed)
+			{
+				system_running = 1;
+				clear_key0;
+			}
+		}
+
+
+	}
+	return 0;
+}
+

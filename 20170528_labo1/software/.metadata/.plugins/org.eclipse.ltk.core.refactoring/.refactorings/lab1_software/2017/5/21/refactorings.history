@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;lab1_software/7seg_driver.c&apos; to &apos;7seg_driver.h&apos;" description="Rename resource &apos;7seg_driver.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="7seg_driver.c" name="7seg_driver.h" stamp="1495746278333" updateReferences="true"/>
+</session>
